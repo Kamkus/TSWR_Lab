@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 class ManiuplatorModel:
-    def __init__(self, Tp):
+    def __init__(self, Tp, m3 = None, r3 = None):
         self.Tp = Tp
         self.l1 = 0.5
         self.r1 = 0.04
@@ -12,10 +12,9 @@ class ManiuplatorModel:
         self.m2 = 2.4
         self.I_1 = 1 / 12 * self.m1 * (3 * self.r1 ** 2 + self.l1 ** 2)
         self.I_2 = 1 / 12 * self.m2 * (3 * self.r2 ** 2 + self.l2 ** 2)
-        self.m3 = 0.5
-        self.r3 = 0.05
+        self.m3 = m3 or 0.5
+        self.r3 = r3 or 0.05
         self.I_3 = 2. / 5 * self.m3 * self.r3 ** 2
-
     def M(self, x):
         """
         Please implement the calculation of the mass matrix, according to the model derived in the exercise
@@ -55,3 +54,16 @@ class ManiuplatorModel:
         s2 = math.sin(q2)
 
         return np.array([[-beta * s2*q2_dot, -beta*s2*(q1_dot + q2_dot)], [beta*s2*q1_dot, 0]])
+
+
+
+    def q_ddot(self, x, u):
+        M = self.M(x)
+        C = self.C(x)
+        invM = np.linalg.inv(M)
+        A = -invM@C
+        B = invM
+
+        q_dot = np.array([[x[2]], [x[3]]])
+
+        return A@q_dot + B@u
