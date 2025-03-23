@@ -19,14 +19,11 @@ class MMAController(Controller):
         # return np.argmin(errors)
 
         errors = np.array([])
-
-
         for model in self.models:
             q_ddot = model.q_ddot(self.prevx, self.prevtau)
             q_dot = np.array([[self.prevx[2]], [self.prevx[3]]]) + self.Tp*q_ddot
             q = np.array([[self.prevx[0]], [self.prevx[1]]]) + self.Tp*q_dot
-            errors = np.abs(np.append(errors, np.sum(x - np.array([q[0], q[1], q_dot[0], q_dot[1]]))))
-
+            errors = np.append(errors, np.abs(np.sum(x - np.array([q[0], q[1], q_dot[0], q_dot[1]]))))
         return np.argmin(errors)
 
 
