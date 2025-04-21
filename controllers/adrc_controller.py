@@ -14,11 +14,10 @@ class ADRController(Controller):
 
     def calculate_control(self, x, q_d, q_d_dot, q_d_ddot):
         u = []
-        M = self.model.M(x)
-        invM = np.linalg.inv(M)
-        # print(np.diagonal(M))
+        print(x)
+        diagonals = np.diagonal(np.linalg.inv(self.model.M(x)))
         for i, controller in enumerate(self.joint_controllers):
-            controller.set_b(np.diagonal(M)[i])
+            controller.set_b(diagonals[i])
             u.append(controller.calculate_control([x[i], x[i+2]], q_d[i], q_d_dot[i], q_d_ddot[i]))
         u = np.array(u)[:, np.newaxis]
         return u
